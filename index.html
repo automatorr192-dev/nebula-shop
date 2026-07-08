@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#08080b">
+<title>Nebula · цифровые товары</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --bg:#08080b; --surface:#0e0e12; --surface-2:#16161b; --surface-3:#1f1f26;
+    --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.16);
+    --text:#f5f5f7; --muted:#9a9aa3; --muted-2:#83838d;
+    --accent:#8b5cf6; --accent-2:#a78bfa; --accent-ink:#fff;
+    --accent-glow:rgba(139,92,246,.45);
+    --green:#34d399; --amber:#f5a524;
+    --radius:22px; --radius-sm:14px; --radius-xs:11px;
+    --nav-h:64px;
+    --font:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--font)}
+  body{overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:6px}
+  svg{display:block}
+  ::-webkit-scrollbar{width:0;height:0}
+
+  .app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px)}
+
+  /* ---------- views ---------- */
+  .view{display:none;animation:fade .35s cubic-bezier(.16,1,.3,1) both}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:64px 22px 40px;text-align:center;overflow:hidden}
+  .orb{position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:520px;height:520px;pointer-events:none;
+    background:
+      radial-gradient(closest-side,rgba(245,165,36,.20),transparent 70%) 46% 42%/70% 70% no-repeat,
+      radial-gradient(closest-side,rgba(139,92,246,.34),transparent 70%) 60% 60%/72% 72% no-repeat,
+      radial-gradient(closest-side,rgba(120,140,60,.16),transparent 70%) 40% 62%/78% 78% no-repeat;
+    filter:blur(26px);opacity:.9;will-change:transform;animation:orbDrift 15s ease-in-out infinite alternate}
+  @keyframes orbDrift{from{transform:translateX(-50%) translateY(-6px) scale(1)}to{transform:translateX(-50%) translateY(20px) scale(1.06)}}
+  .orb::after{content:"";position:absolute;inset:120px;border-radius:50%;
+    box-shadow:0 0 120px 30px rgba(139,92,246,.14) inset;border:1px solid rgba(245,165,36,.12)}
+  .hero>*:not(.orb){position:relative;z-index:1}
+  .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border-strong);
+    border-radius:999px;background:rgba(255,255,255,.03);font-size:13px;color:#d6d6db;margin-bottom:22px;backdrop-filter:blur(8px)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .hero h1{font-size:40px;line-height:1.02;letter-spacing:-.03em;font-weight:800}
+  .hero h1 .mut{color:var(--muted-2)}
+  .hero p{margin:16px auto 0;max-width:320px;color:var(--muted);font-size:15.5px;line-height:1.5}
+  .hero-cta{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+  .hero-cta .btn{width:100%}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 22px;border-radius:14px;font-weight:600;font-size:15px;white-space:nowrap;transition:transform .12s,filter .2s,background .2s}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff;box-shadow:0 8px 30px -8px var(--accent-glow)}
+  .btn-primary:active{filter:brightness(1.05)}
+  .btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+  .btn-block{width:100%}
+
+  /* ---------- brand strip ---------- */
+  .brands{padding:8px 0 30px}
+  .brands .cap{text-align:center;color:var(--muted-2);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px}
+  .marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .marquee-track{display:flex;gap:44px;width:max-content;will-change:transform;animation:scroll 26s linear infinite}
+  .marquee-track svg{height:26px;width:auto;color:#7c7c85;transition:color .3s;flex:none}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* ---------- section head ---------- */
+  .sec{padding:14px 20px 8px}
+  .overline{display:flex;align-items:center;gap:12px;color:var(--muted-2);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+  .overline::before{content:"";width:26px;height:1px;background:var(--muted-2)}
+  .sec h2{font-size:27px;letter-spacing:-.025em;font-weight:800;line-height:1.08}
+  .sec .sub{color:var(--muted);font-size:14.5px;margin-top:8px;line-height:1.45}
+
+  /* ---------- bento highlight cards ---------- */
+  .bento{display:grid;grid-template-columns:1fr;gap:14px;padding:20px 20px 6px}
+  .hl{position:relative;text-align:left;border:1px solid var(--border);background:linear-gradient(180deg,var(--surface),#08080a);border-radius:var(--radius);padding:22px 20px 20px;overflow:hidden;transition:transform .15s,border-color .25s}
+  .hl:active{transform:scale(.985)}
+  .hl.glow::after{content:"";position:absolute;right:-40px;bottom:-60px;width:200px;height:200px;background:radial-gradient(closest-side,var(--accent-glow),transparent 70%);filter:blur(10px);opacity:.5;pointer-events:none}
+  .tile{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(180deg,rgba(139,92,246,.22),rgba(139,92,246,.06));border:1px solid rgba(139,92,246,.28);color:var(--accent-2);margin-bottom:16px}
+  .tile svg{width:22px;height:22px}
+  .hl h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .hl .d{color:var(--muted);font-size:14px;margin-top:6px;line-height:1.45;max-width:24ch}
+  .checks{margin-top:16px;display:grid;gap:9px}
+  .checks li{display:flex;align-items:center;gap:9px;font-size:13.5px;color:#c9c9d0;list-style:none}
+  .ck{width:16px;height:16px;flex:none;color:var(--accent-2)}
+  .hl-visual{margin-top:18px;border:1px solid var(--border);border-radius:14px;background:#0e0e12;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+  .hl-visual .bal{font-size:24px;font-weight:800;letter-spacing:-.02em}
+  .hl-visual .bal small{font-size:12px;color:var(--muted);font-weight:500;display:block;letter-spacing:.04em;text-transform:uppercase}
+
+  /* ---------- chips ---------- */
+  .chips{display:flex;gap:9px;overflow-x:auto;padding:16px 20px 6px;scrollbar-width:none}
+  .chip{flex:none;height:42px;padding:0 17px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;transition:.2s}
+  .chip.active{background:var(--text);color:#000;border-color:var(--text)}
+
+  /* ---------- product grid ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:14px 20px 30px}
+  @keyframes cardIn{from{opacity:0}to{opacity:1}}
+  .grid .card,.bento .hl{animation:cardIn .45s ease both}
+  .grid .card:nth-child(2){animation-delay:.05s}.grid .card:nth-child(3){animation-delay:.1s}
+  .grid .card:nth-child(4){animation-delay:.15s}.grid .card:nth-child(5){animation-delay:.2s}
+  .grid .card:nth-child(6){animation-delay:.25s}.grid .card:nth-child(n+7){animation-delay:.3s}
+  .bento .hl:nth-child(2){animation-delay:.08s}
+  .card{position:relative;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);padding:15px 14px 14px;display:flex;flex-direction:column;transition:transform .14s,border-color .25s,background .25s}
+  .card:active{transform:scale(.97)}
+  .card:hover{border-color:var(--border-strong)}
+  .card .top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+  .logo-tile{width:38px;height:38px;border-radius:11px;background:var(--surface-3);display:grid;place-items:center;color:#e6e6ea}
+  .logo-tile svg{width:21px;height:21px}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:7px;background:rgba(139,92,246,.16);color:var(--accent-2)}
+  .tag.hot{background:rgba(245,165,36,.15);color:var(--amber)}
+  .card h4{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .card .unit{color:var(--muted-2);font-size:12.5px;margin-top:3px}
+  .card .bottom{margin-top:auto;padding-top:14px;display:flex;align-items:center;justify-content:space-between}
+  .price{font-size:15.5px;font-weight:800;letter-spacing:-.02em}
+  .price .old{font-size:12px;color:var(--muted-2);font-weight:500;text-decoration:line-through;margin-right:5px}
+  .add{width:32px;height:32px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;color:var(--text);transition:.15s}
+  .add:active{background:var(--accent);color:#fff;transform:scale(.9)}
+
+  /* ---------- steam view ---------- */
+  .pad{padding:20px}
+  .field{margin-top:18px}
+  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:9px;font-weight:500}
+  .input{width:100%;height:52px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0 16px;font-size:16px;font-family:inherit;transition:border-color .2s}
+  .input:focus{outline:none;border-color:var(--accent)}
+  .presets{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+  .preset{height:46px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:14px;transition:.15s}
+  .preset.active{border-color:var(--accent);background:rgba(139,92,246,.12);color:#fff}
+  .summary{margin-top:24px;border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:16px 18px}
+  .summary .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 0;color:var(--muted)}
+  .summary .row.total{color:var(--text);font-weight:800;font-size:18px;border-top:1px solid var(--border);margin-top:8px;padding-top:14px;letter-spacing:-.02em}
+
+  /* ---------- wallet ---------- */
+  .balance-card{margin:20px;border-radius:var(--radius);padding:26px 22px;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#1a1030,#0a0a12);border:1px solid rgba(139,92,246,.25)}
+  .balance-card::after{content:"";position:absolute;right:-30px;top:-40px;width:180px;height:180px;background:radial-gradient(closest-side,var(--accent-glow),transparent 70%);filter:blur(6px)}
+  .balance-card .lbl{color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;position:relative}
+  .balance-card .amount{font-size:40px;font-weight:800;letter-spacing:-.03em;margin-top:8px;position:relative}
+  .balance-card .actions{display:flex;gap:10px;margin-top:22px;position:relative}
+  .txs{padding:6px 20px 20px}
+  .tx{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .tx:last-child{border-bottom:none}
+  .tx .ti{width:40px;height:40px;border-radius:11px;background:var(--surface-2);display:grid;place-items:center;color:#d6d6db;flex:none}
+  .tx .ti svg{width:20px;height:20px}
+  .tx .tt{flex:1;min-width:0}
+  .tx .tt b{font-size:14.5px;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tx .tt span{font-size:12.5px;color:var(--muted-2)}
+  .tx .tv{font-size:14.5px;font-weight:700;white-space:nowrap}
+  .tx .tv.plus{color:var(--green)}
+
+  /* ---------- profile ---------- */
+  .prof-head{display:flex;align-items:center;gap:15px;padding:24px 20px 8px}
+  .avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;flex:none}
+  .prof-head b{font-size:19px;font-weight:700;display:block}
+  .prof-head span{color:var(--muted);font-size:13.5px}
+  .list{padding:14px 20px 20px}
+  .li{display:flex;align-items:center;gap:14px;padding:16px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;transition:.15s}
+  .li:active{transform:scale(.99);background:var(--surface-2)}
+  .li .ic{width:22px;height:22px;color:var(--muted);flex:none}
+  .li b{flex:1;font-size:14.5px;font-weight:500}
+  .li .chev{width:18px;height:18px;color:var(--muted-2)}
+
+  /* ---------- section title small ---------- */
+  .subttl{padding:8px 20px 2px;font-size:15px;font-weight:700;color:#d6d6db}
+
+  /* ---------- bottom sheet ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-width:480px;margin:0 auto;
+    background:var(--surface);border-top-left-radius:26px;border-top-right-radius:26px;border:1px solid var(--border);border-bottom:none;
+    transform:translateY(102%);transition:transform .38s cubic-bezier(.22,1,.36,1);padding:10px 22px calc(24px + env(safe-area-inset-bottom))}
+  .sheet.open{transform:none}
+  .grabber{width:38px;height:4px;border-radius:2px;background:var(--surface-3);margin:6px auto 18px}
+  .sheet-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .sheet-head .logo-tile{width:52px;height:52px;border-radius:14px}
+  .sheet-head .logo-tile svg{width:28px;height:28px}
+  .sheet-head h3{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .sheet-head .u{color:var(--muted);font-size:13px;margin-top:2px}
+  .sheet .desc{color:var(--muted);font-size:14.5px;line-height:1.5;margin:14px 0 4px}
+  .variants{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 4px}
+  .variant{padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);font-size:13.5px;font-weight:600;color:var(--muted);transition:.15s}
+  .variant.active{border-color:var(--accent);background:rgba(139,92,246,.12);color:#fff}
+  .sheet-price{display:flex;align-items:baseline;gap:10px;margin:20px 0 16px}
+  .sheet-price b{font-size:30px;font-weight:800;letter-spacing:-.03em}
+  .sheet-price .old{font-size:15px;color:var(--muted-2);text-decoration:line-through}
+  .pay-fallback{display:none}
+  body.no-tg .pay-fallback{display:flex}
+
+  /* ---------- toast ---------- */
+  .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 26px);transform:translate(-50%,20px);z-index:80;
+    background:#111116;border:1px solid var(--border-strong);border-radius:14px;padding:13px 18px;display:flex;align-items:center;gap:10px;
+    font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 12px 40px -8px rgba(0,0,0,.7);max-width:340px}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast .ok{width:22px;height:22px;color:var(--green);flex:none}
+
+  /* ---------- bottom nav ---------- */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:480px;margin:0 auto;height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+    padding-bottom:env(safe-area-inset-bottom);display:flex;background:rgba(10,10,12,.82);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+  .nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted-2);font-size:10.5px;font-weight:600;transition:color .2s}
+  .nav button svg{width:23px;height:23px;transition:transform .2s}
+  .nav button.active{color:var(--text)}
+  .nav button.active svg{transform:translateY(-1px)}
+  .nav .cart-badge{position:absolute;top:8px;margin-left:16px;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center}
+  .nav .cart-badge.show{display:flex}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== HOME ===== -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="orb"></div>
+      <span class="badge"><i class="dot"></i> Новинка: оплата картой РФ и крипто</span>
+      <h1>Цифровые товары<br><span class="mut">в один тап</span></h1>
+      <p>ИИ-подписки, пополнение Steam, игровые ключи и медиа. Оплата прямо в Telegram.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" data-nav="catalog">Открыть каталог</button>
+        <button class="btn btn-ghost" data-view="steam">Пополнить Steam</button>
+      </div>
+    </div>
+
+    <div class="brands">
+      <div class="cap">Работаем с лучшими сервисами</div>
+      <div class="marquee"><div class="marquee-track" id="marquee"></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="overline">01 · Витрина</div>
+      <h2>Всё, что нужно,<br>в одном месте</h2>
+      <p class="sub">Моментальная доставка на аккаунт. Гарантия и поддержка 24/7.</p>
+    </div>
+
+    <div class="bento" id="bento"></div>
+
+    <div class="subttl">Популярное</div>
+    <div class="grid" id="home-grid"></div>
+  </section>
+
+  <!-- ===== CATALOG ===== -->
+  <section class="view" id="view-catalog">
+    <div class="sec" style="padding-top:26px">
+      <div class="overline">Каталог</div>
+      <h2>Магазин</h2>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="catalog-grid"></div>
+  </section>
+
+  <!-- ===== STEAM ===== -->
+  <section class="view" id="view-steam">
+    <div class="sec" style="padding-top:26px">
+      <div class="overline">Пополнение</div>
+      <h2>Кошелёк Steam</h2>
+      <p class="sub">Зачислим на баланс Steam за пару минут. Комиссия уже включена.</p>
+    </div>
+    <div class="pad" style="padding-top:6px">
+      <div class="field">
+        <label for="steam-login">Логин Steam</label>
+        <input class="input" id="steam-login" placeholder="Например, gaben" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="steam-amount">Сумма пополнения</label>
+        <div class="presets" id="steam-presets"></div>
+        <input class="input" id="steam-amount" style="margin-top:12px" inputmode="numeric" placeholder="Своя сумма, ₽">
+      </div>
+      <div class="summary">
+        <div class="row"><span>К зачислению</span><span id="steam-net">1 000 ₽</span></div>
+        <div class="row"><span>Сервисный сбор</span><span id="steam-fee">0 ₽</span></div>
+        <div class="row total"><span>К оплате</span><span id="steam-total">1 000 ₽</span></div>
+      </div>
+      <button class="btn btn-primary btn-block pay-fallback" id="steam-pay" style="margin-top:20px">Оплатить</button>
+    </div>
+  </section>
+
+  <!-- ===== WALLET ===== -->
+  <section class="view" id="view-wallet">
+    <div class="balance-card">
+      <div class="lbl">Баланс аккаунта</div>
+      <div class="amount" id="wallet-amount">2 450 ₽</div>
+      <div class="actions">
+        <button class="btn btn-primary" data-view="steam" style="height:44px;padding:0 18px;font-size:14px">Пополнить</button>
+        <button class="btn btn-ghost" data-nav="catalog" style="height:44px;padding:0 18px;font-size:14px">В каталог</button>
+      </div>
+    </div>
+    <div class="subttl">История</div>
+    <div class="txs" id="txs"></div>
+  </section>
+
+  <!-- ===== PROFILE ===== -->
+  <section class="view" id="view-profile">
+    <div class="prof-head">
+      <div class="avatar" id="prof-av">N</div>
+      <div>
+        <b id="prof-name">Гость</b>
+        <span id="prof-id">Telegram Mini App</span>
+      </div>
+    </div>
+    <div class="list" id="prof-list"></div>
+  </section>
+
+  <!-- nav -->
+  <nav class="nav" id="nav"></nav>
+</div>
+
+<!-- sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grabber"></div>
+  <div class="sheet-head">
+    <div class="logo-tile" id="sh-logo"></div>
+    <div><h3 id="sh-name"></h3><div class="u" id="sh-unit"></div></div>
+  </div>
+  <p class="desc" id="sh-desc"></p>
+  <ul class="checks" id="sh-checks"></ul>
+  <div class="variants" id="sh-variants"></div>
+  <div class="sheet-price"><b id="sh-price"></b><span class="old" id="sh-old"></span></div>
+  <button class="btn btn-primary btn-block pay-fallback" id="sh-pay">Оплатить</button>
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast"><span class="ok"></span><span id="toast-msg"></span></div>
+
+<script>
+/* ============ Telegram bridge (with browser fallback) ============ */
+const WA = window.Telegram && window.Telegram.WebApp;
+const TG = WA && WA.platform && WA.platform !== 'unknown' ? WA : null;
+const noop=()=>{};
+const tg = TG || {
+  ready:noop, expand:noop, setHeaderColor:noop, setBackgroundColor:noop, colorScheme:'dark',
+  themeParams:{}, initDataUnsafe:{},
+  MainButton:{show:noop,hide:noop,setText:noop,onClick:noop,offClick:noop,setParams:noop,showProgress:noop,hideProgress:noop},
+  BackButton:{show:noop,hide:noop,onClick:noop,offClick:noop},
+  HapticFeedback:{impactOccurred:noop,notificationOccurred:noop,selectionChanged:noop}
+};
+if(!TG) document.body.classList.add('no-tg');
+tg.ready(); tg.expand();
+try{ tg.setHeaderColor('#08080b'); tg.setBackgroundColor('#08080b'); }catch(e){}
+const haptic=(t='light')=>{try{tg.HapticFeedback.impactOccurred(t)}catch(e){}};
+const notify=(t='success')=>{try{tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
+
+/* ============ SVG icons ============ */
+const UI={
+  check:'<svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>',
+  chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>',
+  gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8S10.5 3 8 4.5 12 8 12 8zM12 8s1.5-5 4-3.5S12 8 12 8z"/></svg>',
+  bell:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  headset:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a4 4 0 0 1-4 3h-2"/></svg>',
+  globe:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>',
+  doc:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>'
+};
+/* brand logos (monochrome, currentColor) */
+const LOGOS={
+  openai:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.05 6.05 0 0 0-6.51-2.9A6.07 6.07 0 0 0 4.98 4.18a5.99 5.99 0 0 0-4 2.9 6.05 6.05 0 0 0 .75 7.1 5.98 5.98 0 0 0 .51 4.91 6.05 6.05 0 0 0 6.52 2.9A5.98 5.98 0 0 0 13.26 22a6.06 6.06 0 0 0 5.77-4.21 5.99 5.99 0 0 0 4-2.9 6.06 6.06 0 0 0-.75-7.07zM13.26 20.5a4.48 4.48 0 0 1-2.88-1.04l.14-.08 4.78-2.76a.78.78 0 0 0 .39-.68v-6.74l2.02 1.17a.07.07 0 0 1 .04.06v5.58a4.5 4.5 0 0 1-4.49 4.49zM3.6 16.38a4.47 4.47 0 0 1-.54-3.01l.14.09 4.78 2.76a.78.78 0 0 0 .78 0l5.84-3.37v2.33a.07.07 0 0 1-.03.06l-4.83 2.79a4.5 4.5 0 0 1-6.14-1.65zM2.34 6.18a4.48 4.48 0 0 1 2.34-1.97v5.67a.77.77 0 0 0 .39.68l5.81 3.36-2.02 1.17a.08.08 0 0 1-.07 0l-4.83-2.79A4.5 4.5 0 0 1 2.34 6.18zm16.6 3.86-5.84-3.4 2.02-1.16a.07.07 0 0 1 .07 0l4.83 2.79a4.49 4.49 0 0 1-.68 8.1v-5.67a.79.79 0 0 0-.4-.67zm2.01-3.03-.14-.08-4.77-2.76a.78.78 0 0 0-.79 0l-5.84 3.37V5.21a.07.07 0 0 1 .03-.06l4.83-2.78a4.5 4.5 0 0 1 6.68 4.66zM8.51 11.86 6.49 10.7a.08.08 0 0 1-.04-.06V5.06a4.5 4.5 0 0 1 7.38-3.45l-.14.08-4.78 2.76a.78.78 0 0 0-.39.68zm1.1-2.36L12.21 8l2.6 1.5v3l-2.6 1.5-2.6-1.5z"/></svg>',
+  claude:'<svg viewBox="0 0 24 24" fill="currentColor"><g><rect x="11" y="1" width="2" height="22" rx="1"/><rect x="1" y="11" width="22" height="2" rx="1"/><rect x="11" y="1" width="2" height="22" rx="1" transform="rotate(45 12 12)"/><rect x="11" y="1" width="2" height="22" rx="1" transform="rotate(-45 12 12)"/></g></svg>',
+  gemini:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c.6 6.4 5.6 11.4 12 12-6.4.6-11.4 5.6-12 12-.6-6.4-5.6-11.4-12-12C6.4 11.4 11.4 6.4 12 0z"/></svg>',
+  midjourney:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18.5h20l-2.6 3.2H4.6L2 18.5zM4.4 17 12 4.2V17H4.4zM13.4 17V8.2L18.8 17h-5.4z"/></svg>',
+  steam:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.98 0C5.68 0 .51 4.86.02 11.04l6.43 2.66c.55-.37 1.2-.59 1.91-.59h.19l2.86-4.14v-.06a4.53 4.53 0 0 1 4.53-4.52 4.53 4.53 0 0 1 4.52 4.53 4.53 4.53 0 0 1-4.52 4.52h-.11l-4.08 2.91v.16a3.4 3.4 0 0 1-3.39 3.4 3.4 3.4 0 0 1-3.33-2.73L.44 15.27C1.86 20.31 6.49 24 11.98 24c6.63 0 12-5.37 12-12S18.6 0 11.98 0zM7.54 18.21l-1.47-.61c.26.54.71 1 1.31 1.25a2.55 2.55 0 0 0 3.33-1.38 2.53 2.53 0 0 0 0-1.95 2.55 2.55 0 0 0-1.38-1.38 2.54 2.54 0 0 0-1.88-.03l1.52.63a1.88 1.88 0 0 1-1.44 3.47zm11.42-9.3a3.02 3.02 0 0 0-3.02-3.02 3.02 3.02 0 0 0-3.01 3.02 3.02 3.02 0 0 0 3.01 3.01 3.02 3.02 0 0 0 3.02-3.01zm-5.27 0a2.27 2.27 0 0 1 2.27-2.27 2.27 2.27 0 0 1 2.26 2.27 2.27 2.27 0 0 1-2.26 2.26 2.27 2.27 0 0 1-2.27-2.26z"/></svg>',
+  playstation:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.98 2.6v17.55l3.98 1.26V6.69c0-.69.3-1.15.79-.99.64.18.76.81.76 1.5v5.88c2.48 1.19 4.43 0 4.43-3.15 0-3.24-1.15-4.68-4.52-5.83A26.6 26.6 0 0 0 8.98 2.6zm4.69 15.69 6.37-2.28c.73-.26.84-.63.25-.83-.59-.2-1.66-.14-2.38.11l-4.24 1.5v-2.4l.24-.08s1.23-.44 2.95-.62c1.72-.19 3.83.03 5.49.63 1.87.6 2.08 1.48 1.6 2.08-.47.6-1.63 1.02-1.63 1.02l-8.26 2.98v-2.31zM1.8 17.97c-1.92-.54-2.24-1.67-1.36-2.32.81-.6 2.19-1.06 2.19-1.06l5.7-2.03v2.3l-4.1 1.47c-.72.26-.83.63-.25.83.59.2 1.66.14 2.38-.11l1.97-.72v2.06c-.13.02-.26.04-.4.06-1.96.32-4.04.19-6.13-.45z"/></svg>',
+  xbox:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.1 21.03A11.95 11.95 0 0 0 12 24a11.96 11.96 0 0 0 7.9-2.97c1.88-1.91-4.32-8.71-7.9-11.42-3.58 2.71-9.78 9.5-7.9 11.42zm11.16-14.4c2.5 2.96 7.48 10.31 6.08 12.91A11.94 11.94 0 0 0 24 12a11.95 11.95 0 0 0-3.57-8.54s-.03-.02-.08-.04c-.06-.02-.15-.04-.28-.04-.6 0-1.99.43-4.81 3.25zM3.65 3.43l-.08.04A11.96 11.96 0 0 0 0 12c0 2.4.7 4.63 1.92 6.51C.51 15.92 5.5 8.56 8 5.6 5.18 2.79 3.78 3.39 3.19 3.39c-.13 0-.21.02-.28.04h.74zm5.47.37C10.9 2.66 11.83 2.6 12 2.6c.17 0 1.1.07 2.88 1.2 0 0-1.53-1.7-2.88-1.8-1.35.1-2.88 1.8-2.88 1.8z"/></svg>',
+  spotify:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.66.48-1.02.24-2.82-1.74-6.36-2.1-10.56-1.14-.42.12-.78-.18-.9-.54-.12-.42.18-.78.54-.9 4.56-1.02 8.52-.6 11.64 1.32.42.18.48.66.3 1.02zm1.44-3.3c-.3.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.38-.48.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.38-1.32 9.78-.66 13.5 1.62.36.18.54.78.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.1 9.3c-.6.18-1.2-.18-1.38-.72-.18-.6.18-1.2.72-1.38 4.32-1.32 11.4-1.02 15.9 1.62.54.3.72 1.02.42 1.56-.3.42-1.02.66-1.56.36z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.54 12 3.54 12 3.54s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.87.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>',
+  netflix:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.4 0v.01c3.03 8.55 5.37 15.17 8.35 23.59 2.34.06 4.85.4 4.85.4-2.8-7.92-5.92-16.75-8.49-24zm8.49 0v9.63l4.71 13.32c-.04-7.86 0-15.58 0-22.95zM5.4 1.05V24c1.87-.22 2.81-.31 4.71-.4v-9.22z"/></svg>',
+  telegram:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.06 0zm4.96 7.22c.1 0 .32.02.47.14a.5.5 0 0 1 .17.33c.02.09.04.3.02.47-.18 1.9-.96 6.5-1.36 8.63-.17.9-.5 1.2-.82 1.23-.7.06-1.23-.46-1.9-.9-1.06-.7-1.65-1.13-2.68-1.8-1.19-.78-.42-1.21.26-1.91.17-.19 3.25-2.98 3.3-3.23.01-.03.01-.15-.05-.21-.07-.06-.17-.04-.25-.02-.11.02-1.8 1.14-5.06 3.34-.48.33-.91.5-1.3.48-.43 0-1.25-.24-1.87-.44-.75-.24-1.35-.37-1.3-.79.03-.21.33-.44.9-.66 3.5-1.53 5.83-2.53 7-3.02 3.33-1.38 4.02-1.62 4.48-1.63z"/></svg>'
+};
+
+/* ============ data ============ */
+const CATS=[['all','Все'],['ai','ИИ'],['media','Медиа'],['keys','Ключи'],['steam','Steam']];
+const P=[
+  {id:'gpt',brand:'openai',cat:'ai',name:'ChatGPT Plus',unit:'подписка / мес',price:1490,tag:'Хит',hot:1,
+    desc:'Полный доступ к GPT-5, продвинутому голосу и генерации изображений. Активируем на ваш аккаунт.',
+    checks:['GPT-5 и o-модели','Приоритет в часы пик','Генерация картинок']},
+  {id:'claude',brand:'claude',cat:'ai',name:'Claude Pro',unit:'подписка / мес',price:1590,
+    desc:'Claude Pro от Anthropic: увеличенные лимиты, приоритетный доступ и работа с большими документами.',
+    checks:['5× больше сообщений','Модель Opus','Projects и артефакты']},
+  {id:'gemini',brand:'gemini',cat:'ai',name:'Gemini Advanced',unit:'подписка / мес',price:1690,
+    desc:'Gemini Advanced с самой мощной моделью Google и 2 ТБ в Google One.',
+    checks:['Топ-модель Google','2 ТБ хранилища','Интеграция с Docs']},
+  {id:'mj',brand:'midjourney',cat:'ai',name:'Midjourney',unit:'подписка / мес',price:2290,tag:'Арт',
+    desc:'Генерация изображений уровня студии. Оформим Standard-план с быстрыми часами.',
+    checks:['15 ч Fast GPU','Коммерческая лицензия','Скрытый режим']},
+  {id:'spotify',brand:'spotify',cat:'media',name:'Spotify Premium',unit:'подписка / мес',price:299,tag:'−40%',
+    desc:'Музыка без рекламы, офлайн и в высоком качестве. Активация на ваш аккаунт.',
+    checks:['Без рекламы','Офлайн-режим','Звук 320 kbps']},
+  {id:'yt',brand:'youtube',cat:'media',name:'YouTube Premium',unit:'подписка / мес',price:399,
+    desc:'YouTube и Music без рекламы, фоновое воспроизведение и загрузки.',
+    checks:['Без рекламы','Фоном и офлайн','YouTube Music']},
+  {id:'netflix',brand:'netflix',cat:'media',name:'Netflix 4K',unit:'подписка / мес',price:899,
+    desc:'Тариф Premium: 4K HDR, 4 экрана одновременно.',
+    checks:['4K UHD + HDR','4 экрана','Без рекламы']},
+  {id:'tgp',brand:'telegram',cat:'media',name:'Telegram Premium',unit:'подписка / мес',price:349,tag:'Хит',hot:1,
+    desc:'Все премиум-фишки Telegram: лимиты ×2, стикеры, скорость, эксклюзивы.',
+    checks:['Лимиты ×2','Премиум-стикеры','Без рекламы']},
+  {id:'steamgift',brand:'steam',cat:'keys',name:'Steam Gift Card',unit:'номинал на выбор',price:500,
+    desc:'Пополните любой аккаунт Steam подарочной картой. Приходит кодом моментально.',
+    checks:['Моментальный код','Любой регион','Не сгорает'],
+    variants:[['500 ₽',500],['1000 ₽',1000],['2000 ₽',2000],['5000 ₽',5000]]},
+  {id:'psn',brand:'playstation',cat:'keys',name:'PlayStation Store',unit:'гифт-карта',price:1000,
+    desc:'Пополнение кошелька PS Store кодом. Регион RU/TR/UA на выбор.',
+    checks:['Код сразу','RU / TR / UA','Игры и подписки'],
+    variants:[['1000 ₽',1000],['2500 ₽',2500],['5000 ₽',5000]]},
+  {id:'xbox',brand:'xbox',cat:'keys',name:'Xbox Game Pass',unit:'подписка / мес',price:599,tag:'Топ',
+    desc:'Game Pass Ultimate: сотни игр, EA Play и облачный гейминг.',
+    checks:['300+ игр','Облачный гейминг','EA Play в комплекте']}
+];
+const byId=id=>P.find(p=>p.id===id);
+const money=n=>n.toLocaleString('ru-RU')+' ₽';
+
+/* ============ state ============ */
+const S={view:'home',cat:'all',cart:0,balance:2450,sheet:null,variant:0,steam:1000};
+
+/* ============ render helpers ============ */
+const el=s=>document.querySelector(s);
+const cardHTML=p=>`<button class="card" data-id="${p.id}">
+  <div class="top">
+    <div class="logo-tile">${LOGOS[p.brand]}</div>
+    ${p.tag?`<span class="tag${p.hot?' hot':''}">${p.tag}</span>`:''}
+  </div>
+  <h4>${p.name}</h4><div class="unit">${p.unit}</div>
+  <div class="bottom">
+    <div class="price">${p.variants?'от ':''}${money(p.price)}</div>
+    <span class="add">${UI.plus}</span>
+  </div>
+</button>`;
+
+function renderMarquee(){
+  const set=['openai','claude','gemini','midjourney','steam','playstation','xbox','spotify','youtube','netflix','telegram'];
+  el('#marquee').innerHTML=[...set,...set].map(k=>LOGOS[k]).join('');
+}
+function renderBento(){
+  el('#bento').innerHTML=`
+  <button class="hl glow" data-view="steam">
+    <div class="tile">${LOGOS.steam}</div>
+    <h3>Пополнить Steam</h3>
+    <div class="d">Зачисление на баланс за пару минут, комиссия включена.</div>
+    <ul class="checks">
+      <li>${UI.check}Моментально на аккаунт</li>
+      <li>${UI.check}Любая сумма от 100 ₽</li>
+      <li>${UI.check}Без скрытых комиссий</li>
+    </ul>
+    <div class="hl-visual"><div class="bal"><small>На баланс</small>1 000 ₽</div><div class="tile" style="margin:0">${UI.bolt}</div></div>
+  </button>
+  <button class="hl" data-id="gpt">
+    <div class="tile">${LOGOS.openai}</div>
+    <h3>ИИ-подписки</h3>
+    <div class="d">ChatGPT, Claude, Gemini и Midjourney на ваш аккаунт.</div>
+    <ul class="checks">
+      <li>${UI.check}Активация за 5 минут</li>
+      <li>${UI.check}Оплата в рублях</li>
+      <li>${UI.check}Гарантия на весь срок</li>
+    </ul>
+    <div class="hl-visual"><div class="bal"><small>от</small>1 490 ₽</div><div class="tile" style="margin:0">${LOGOS.claude}</div></div>
+  </button>`;
+}
+function renderHomeGrid(){
+  el('#home-grid').innerHTML=P.filter(p=>['gpt','claude','tgp','spotify','steamgift','xbox'].includes(p.id)).map(cardHTML).join('');
+}
+function renderChips(){
+  el('#chips').innerHTML=CATS.map(([k,l])=>`<button class="chip${k===S.cat?' active':''}" data-cat="${k}">${l}</button>`).join('');
+}
+function renderCatalog(){
+  const list=S.cat==='all'?P:P.filter(p=>p.cat===S.cat);
+  el('#catalog-grid').innerHTML=list.map(cardHTML).join('');
+}
+function renderTxs(){
+  const tx=[
+    ['openai','ChatGPT Plus','Сегодня, 14:20',-1490,0],
+    ['steam','Пополнение Steam','Вчера, 19:05',-1000,0],
+    ['wallet','Пополнение баланса','5 июля',+3000,1],
+    ['spotify','Spotify Premium','2 июля',-299,0]
+  ];
+  el('#txs').innerHTML=tx.map(([b,t,d,v,plus])=>`<div class="tx">
+    <div class="ti">${LOGOS[b]||UI.wallet}</div>
+    <div class="tt"><b>${t}</b><span>${d}</span></div>
+    <div class="tv${plus?' plus':''}">${plus?'+':'−'}${money(Math.abs(v))}</div>
+  </div>`).join('');
+}
+function renderProfile(){
+  const u=tg.initDataUnsafe&&tg.initDataUnsafe.user;
+  if(u){el('#prof-name').textContent=[u.first_name,u.last_name].filter(Boolean).join(' ')||'Пользователь';
+    el('#prof-id').textContent='@'+(u.username||'telegram');
+    el('#prof-av').textContent=(u.first_name||'N')[0].toUpperCase();}
+  el('#prof-list').innerHTML=[
+    [UI.bell,'Уведомления'],[UI.headset,'Поддержка 24/7'],[UI.globe,'Регион и язык'],
+    [UI.shield.replace('class="ck"','class="ic"'),'Гарантия и возврат'],[UI.doc,'Условия']
+  ].map(([ic,t])=>`<div class="li">${ic.includes('class="ic"')?ic:`<span class="ic">${ic}</span>`}<b>${t}</b>${UI.chev}</div>`).join('');
+}
+function renderSteamPresets(){
+  el('#steam-presets').innerHTML=[300,500,1000,2000].map(v=>`<button class="preset${v===S.steam?' active':''}" data-amt="${v}">${v}</button>`).join('');
+}
+
+/* ============ navigation ============ */
+const NAV=[['home','Главная',UI.home],['catalog','Каталог',UI.grid],['wallet','Кошелёк',UI.wallet],['profile','Профиль',UI.user]];
+function renderNav(){
+  el('#nav').innerHTML=NAV.map(([v,l,ic])=>`<button data-view="${v}" class="${v===S.view?'active':''}">
+    <span style="position:relative">${ic}${v==='catalog'?`<span class="cart-badge" id="cart-badge">0</span>`:''}</span>${l}</button>`).join('');
+}
+function setView(v){
+  S.view=v;
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  el('#view-'+v).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  window.scrollTo({top:0});
+  if(v==='steam'){tg.BackButton.show();updateSteam();} else tg.BackButton.hide();
+  if(v==='steam') attachSteamMain();
+  else if(!S.sheet) detachMain();
+  haptic('light');
+}
+
+/* ============ sheet ============ */
+function openSheet(id){
+  const p=byId(id); if(!p) return;
+  S.sheet=p; S.variant=0;
+  el('#sh-logo').innerHTML=LOGOS[p.brand];
+  el('#sh-name').textContent=p.name;
+  el('#sh-unit').textContent=p.unit;
+  el('#sh-desc').textContent=p.desc;
+  el('#sh-checks').innerHTML=p.checks.map(c=>`<li>${UI.check}${c}</li>`).join('');
+  el('#sh-variants').innerHTML=p.variants?p.variants.map(([l,v],i)=>`<button class="variant${i===0?' active':''}" data-v="${i}">${l}</button>`).join(''):'';
+  updateSheetPrice();
+  el('#scrim').classList.add('open'); el('#sheet').classList.add('open');
+  tg.BackButton.show(); attachSheetMain(); haptic('light');
+}
+function updateSheetPrice(){
+  const p=S.sheet; const price=p.variants?p.variants[S.variant][1]:p.price;
+  el('#sh-price').textContent=money(price);
+  el('#sh-old').textContent=p.hot?money(Math.round(price*1.3)):'';
+  el('#sh-pay').textContent='Оплатить · '+money(price);
+  if(TG){tg.MainButton.setText('Оплатить · '+money(price));}
+}
+function closeSheet(){
+  el('#scrim').classList.remove('open'); el('#sheet').classList.remove('open');
+  S.sheet=null; if(S.view!=='steam')tg.BackButton.hide();
+  if(S.view==='steam')attachSteamMain(); else detachMain();
+}
+
+/* ============ MainButton wiring ============ */
+function attachSheetMain(){
+  if(!TG)return;
+  tg.MainButton.offClick(paySheet);
+  tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
+  tg.MainButton.onClick(paySheet); tg.MainButton.show();
+}
+function attachSteamMain(){
+  if(!TG)return;
+  tg.MainButton.offClick(paySteam);
+  tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
+  tg.MainButton.setText('Оплатить · '+money(S.steam));
+  tg.MainButton.onClick(paySteam); tg.MainButton.show();
+}
+function detachMain(){ if(!TG)return; tg.MainButton.offClick(paySheet); tg.MainButton.offClick(paySteam); tg.MainButton.hide(); }
+
+/* ============ payments (demo) ============ */
+function paySheet(){
+  const p=S.sheet; if(!p)return;
+  const price=p.variants?p.variants[S.variant][1]:p.price;
+  S.cart++; updateCart();
+  closeSheet();
+  notify('success');
+  toast(`«${p.name}» оплачен на ${money(price)}`);
+}
+function paySteam(){
+  if(!S.steam||S.steam<100){toast('Минимум 100 ₽');notify('error');return;}
+  notify('success');
+  toast(`Steam пополнен на ${money(S.steam)}`);
+}
+function updateCart(){
+  const b=el('#cart-badge'); if(!b)return;
+  b.textContent=S.cart; b.classList.toggle('show',S.cart>0);
+}
+
+/* ============ steam calc ============ */
+function updateSteam(){
+  const net=S.steam||0, fee=0, total=net+fee;
+  el('#steam-net').textContent=money(net);
+  el('#steam-fee').textContent=money(fee);
+  el('#steam-total').textContent=money(total);
+  if(TG&&S.view==='steam')tg.MainButton.setText('Оплатить · '+money(total));
+}
+
+/* ============ toast ============ */
+let toastT;
+function toast(msg){
+  el('#toast-msg').textContent=msg;
+  el('#toast .ok').innerHTML=UI.check.replace('class="ck"','');
+  const t=el('#toast'); t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ============ events ============ */
+document.addEventListener('click',e=>{
+  const card=e.target.closest('[data-id]');
+  if(card){openSheet(card.dataset.id);return;}
+  const nav=e.target.closest('[data-view]');
+  if(nav){if(S.sheet)closeSheet();setView(nav.dataset.view);return;}
+  const navc=e.target.closest('[data-nav]');
+  if(navc){setView(navc.dataset.nav);return;}
+  const chip=e.target.closest('[data-cat]');
+  if(chip){S.cat=chip.dataset.cat;renderChips();renderCatalog();haptic('light');return;}
+  const v=e.target.closest('[data-v]');
+  if(v){S.variant=+v.dataset.v;document.querySelectorAll('#sh-variants .variant').forEach(x=>x.classList.toggle('active',x===v));updateSheetPrice();haptic('light');return;}
+  const amt=e.target.closest('[data-amt]');
+  if(amt){S.steam=+amt.dataset.amt;el('#steam-amount').value='';renderSteamPresets();updateSteam();haptic('light');return;}
+  if(e.target.closest('#scrim'))closeSheet();
+});
+el('#steam-amount').addEventListener('input',e=>{
+  const v=parseInt(e.target.value.replace(/\D/g,''))||0; S.steam=v;
+  document.querySelectorAll('#steam-presets .preset').forEach(x=>x.classList.remove('active'));
+  updateSteam();
+});
+el('#sh-pay').addEventListener('click',paySheet);
+el('#steam-pay').addEventListener('click',paySteam);
+tg.BackButton.onClick(()=>{ if(S.sheet)closeSheet(); else setView('home'); });
+
+/* ============ init ============ */
+renderMarquee();renderBento();renderHomeGrid();renderChips();renderCatalog();
+renderTxs();renderProfile();renderSteamPresets();renderNav();
+el('#wallet-amount').textContent=money(S.balance);
+</script>
+</body>
+</html>
