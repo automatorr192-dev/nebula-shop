@@ -14,7 +14,7 @@ from aiogram.types import (
 )
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://example.github.io/demo-shop/")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://automatorr192-dev.github.io/nebula-shop/")
 
 bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
