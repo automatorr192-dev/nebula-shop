@@ -28,6 +28,17 @@ WEBAPP_URL = f"{BASE_URL}{'&' if '?' in BASE_URL else '?'}v={VERSION}"
 
 dp = Dispatcher()
 
+# Видно в пустом чате ещё до нажатия «Начать» — единственный шанс объяснить, зачем бот.
+DESCRIPTION = (
+    "Nebula — магазин цифровых товаров прямо в Telegram.\n\n"
+    "ИИ-подписки, пополнение Steam, игровые ключи и медиасервисы. Каталог, корзина "
+    "и оформление живут внутри приложения — ставить ничего не нужно, из чата не выходишь.\n\n"
+    "Нажми «Начать», чтобы открыть магазин."
+)
+SHORT_DESCRIPTION = (
+    "Магазин цифровых товаров в Telegram: ИИ-подписки, Steam, ключи и медиа."
+)
+
 
 def shop_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -53,6 +64,8 @@ async def main():
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     await bot.set_my_commands([BotCommand(command="start", description="Открыть магазин")])
+    await bot.set_my_description(description=DESCRIPTION)
+    await bot.set_my_short_description(short_description=SHORT_DESCRIPTION)
     await bot.set_chat_menu_button(
         menu_button=MenuButtonWebApp(text="Магазин", web_app=WebAppInfo(url=WEBAPP_URL))
     )
