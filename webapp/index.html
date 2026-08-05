@@ -7,7 +7,11 @@
 <title>Nebula · цифровые товары</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Шрифт грузится с чужого домена прямо в момент открытия мини-аппа: как обычный
+     stylesheet он блокирует первый кадр на лишний DNS+TLS. Отдаём его асинхронно —
+     интерфейс рисуется системным шрифтом и переключается, когда Geologica доедет. -->
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root{
@@ -352,6 +356,7 @@ const noop=()=>{};
 const tg = TG || {
   ready:noop, expand:noop, setHeaderColor:noop, setBackgroundColor:noop, colorScheme:'dark',
   themeParams:{}, initDataUnsafe:{},
+  enableClosingConfirmation:noop, disableClosingConfirmation:noop, isVersionAtLeast:()=>true,
   MainButton:{show:noop,hide:noop,setText:noop,onClick:noop,offClick:noop,setParams:noop,showProgress:noop,hideProgress:noop},
   BackButton:{show:noop,hide:noop,onClick:noop,offClick:noop},
   HapticFeedback:{impactOccurred:noop,notificationOccurred:noop,selectionChanged:noop}
@@ -359,6 +364,9 @@ const tg = TG || {
 if(!TG) document.body.classList.add('no-tg');
 tg.ready(); tg.expand();
 try{ tg.setHeaderColor('#08080b'); tg.setBackgroundColor('#08080b'); }catch(e){}
+// Магазин брендированный и всегда тёмный, поэтому тему клиента мы не наследуем, а
+// красим хром Telegram под себя — иначе шапка и фон разъезжаются на светлой теме.
+const hasVersion=v=>{ try{ return !TG || tg.isVersionAtLeast(v); }catch(e){ return false; } };
 const haptic=(t='light')=>{try{tg.HapticFeedback.impactOccurred(t)}catch(e){}};
 const notify=(t='success')=>{try{tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
 
@@ -568,13 +576,15 @@ function closeSheet(){
 function attachSheetMain(){
   if(!TG)return;
   tg.MainButton.offClick(paySheet);
-  tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
+  // setParams появился в Bot API 6.1 — на клиенте постарше он бросает и рвёт весь флоу.
+  if(hasVersion('6.1'))tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
   tg.MainButton.onClick(paySheet); tg.MainButton.show();
 }
 function attachSteamMain(){
   if(!TG)return;
   tg.MainButton.offClick(paySteam);
-  tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
+  // setParams появился в Bot API 6.1 — на клиенте постарше он бросает и рвёт весь флоу.
+  if(hasVersion('6.1'))tg.MainButton.setParams({color:'#8b5cf6',text_color:'#ffffff'});
   tg.MainButton.setText('Оплатить · '+money(S.steam));
   tg.MainButton.onClick(paySteam); tg.MainButton.show();
 }
@@ -597,6 +607,10 @@ function paySteam(){
 function updateCart(){
   const b=el('#cart-badge'); if(!b)return;
   b.textContent=S.cart; b.classList.toggle('show',S.cart>0);
+  // Свайп вниз закрывает мини-апп мгновенно и без вопросов: с непустой корзиной это
+  // потерянный заказ, поэтому включаем подтверждение ровно на это время.
+  if(!TG)return;
+  try{ S.cart>0 ? tg.enableClosingConfirmation() : tg.disableClosingConfirmation(); }catch(e){}
 }
 
 /* ============ steam calc ============ */

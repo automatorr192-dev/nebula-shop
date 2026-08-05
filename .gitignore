@@ -3,3 +3,11 @@ refs/
 .DS_Store
 Thumbs.db
 *.log
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+data/
