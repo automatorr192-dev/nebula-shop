@@ -1,0 +1,35 @@
+name: Pages
+
+# Мини-апп пока живёт на GitHub Pages, адрес — https://automatorr192-dev.github.io/nebula-shop/
+# Переезд на Amvera потом: main.py и amvera.yml для него уже готовы, тот же контейнер
+# отдаёт webapp/ и держит бота. Пока переезда нет — публикуем сюда.
+# Чтобы заработало: settings -> Pages -> Source: GitHub Actions.
+on:
+  push:
+    branches: [main]
+    paths: ["webapp/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: webapp
+      - id: deploy
+        uses: actions/deploy-pages@v4
