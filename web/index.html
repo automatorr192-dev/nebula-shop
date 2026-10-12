@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#07070b" />
+    <meta name="description" content="Nebula: магазин цифровых товаров в Telegram. ИИ-подписки, пополнение Steam, игровые ключи и медиасервисы." />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <title>Nebula · цифровые товары</title>
+  </head>
+  <body>
+    <div class="device" aria-hidden="true"><span class="sb-time">9:41</span><svg viewBox="0 0 72 13"><rect x="0" y="8" width="3" height="5" rx="1"/><rect x="5" y="5.5" width="3" height="7.5" rx="1"/><rect x="10" y="3" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="13" rx="1"/><path d="M30.5 2.6a10 10 0 0 1 7 2.9l1.3-1.3a11.8 11.8 0 0 0-16.6 0l1.3 1.3a10 10 0 0 1 7-2.9zm0 3.7a6.3 6.3 0 0 1 4.4 1.8l1.3-1.3a8.1 8.1 0 0 0-11.4 0l1.3 1.3a6.3 6.3 0 0 1 4.4-1.8zm0 3.7a2.6 2.6 0 0 1 1.8.7l-1.8 1.9-1.8-1.9a2.6 2.6 0 0 1 1.8-.7z"/><rect x="44.5" y=".5" width="24" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".4"/><rect x="46.5" y="2.5" width="17" height="8" rx="2"/><path d="M70 4.5v4a2 2 0 0 0 0-4z" opacity=".4"/></svg></div>
+    <div id="root"></div>
+    <aside class="web-intro" aria-label="О проекте">
+      <p class="wi-kicker">Telegram Mini App</p>
+      <p class="wi-title">Nebula</p>
+      <p class="wi-text">Магазин цифровых товаров внутри Telegram: ИИ-подписки, ключи и пополнение Steam. Каждый товар выглядит картой с номиналом, покупка в два касания.</p>
+      <div class="wi-qr"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#07070b" d="M0 0.5h7m1 0h1m1 0h2m1 0h4m1 0h1m1 0h2m1 0h1m2 0h7m-33 1h1m5 0h1m4 0h1m1 0h2m3 0h3m5 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h3m2 0h2m1 0h3m1 0h4m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m3 0h1m2 0h3m8 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h1m3 0h2m1 0h1m3 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h3m2 0h3m4 0h1m5 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m2 0h1m5 0h5m-22 1h1m3 0h1m1 0h6m3 0h3m3 0h2m1 0h6m2 0h1m-33 1h1m4 0h1m3 0h2m4 0h4m1 0h4m1 0h1m3 0h3m-32 1h2m4 0h5m2 0h3m2 0h1m1 0h1m2 0h2m4 0h1m1 0h1m-30 1h1m4 0h1m1 0h1m2 0h2m1 0h2m4 0h1m2 0h1m1 0h1m5 0h1m-32 1h2m2 0h3m2 0h1m2 0h1m1 0h2m4 0h3m2 0h1m1 0h2m-30 1h1m1 0h2m1 0h1m2 0h1m2 0h4m3 0h3m1 0h2m3 0h1m-27 1h2m3 0h1m3 0h1m4 0h1m1 0h2m1 0h2m1 0h4m1 0h1m2 0h1m-32 1h6m1 0h7m1 0h3m3 0h6m1 0h1m-29 1h1m4 0h2m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m1 0h4m1 0h1m1 0h1m2 0h1m-30 1h4m1 0h3m1 0h3m1 0h2m1 0h1m1 0h1m2 0h1m1 0h1m3 0h3m-32 1h1m5 0h4m1 0h1m3 0h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h1m-30 1h1m1 0h1m1 0h2m1 0h1m1 0h1m2 0h2m3 0h2m2 0h5m1 0h1m4 0h1m-28 1h3m2 0h4m4 0h4m2 0h1m1 0h1m1 0h2m1 0h2m-33 1h2m1 0h3m1 0h1m2 0h1m2 0h2m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m1 0h1m1 0h1m-29 1h4m3 0h2m2 0h1m1 0h4m3 0h2m2 0h1m2 0h2m-25 1h2m3 0h1m1 0h1m2 0h5m1 0h1m1 0h1m3 0h1m-30 1h2m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m3 0h2m1 0h5m2 0h2m-25 1h1m3 0h1m1 0h4m2 0h5m3 0h1m1 0h2m-32 1h7m1 0h4m1 0h4m1 0h1m5 0h1m1 0h1m1 0h2m1 0h1m-32 1h1m5 0h1m3 0h2m1 0h2m4 0h1m1 0h1m2 0h1m3 0h1m2 0h1m-32 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h2m2 0h2m3 0h6m2 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h1m3 0h3m2 0h2m1 0h4m-30 1h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h2m2 0h1m3 0h1m2 0h4m1 0h1m-31 1h1m5 0h1m8 0h3m3 0h6m-27 1h7m1 0h2m1 0h4m2 0h3m1 0h6m5 0h1"/></svg><span>Наведите камеру телефона, чтобы открыть демо</span></div>
+      <p class="wi-credit">Демо для портфолио · <a href="https://instagram.com/automatorrr" rel="noopener">@automatorrr</a></p>
+    </aside>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

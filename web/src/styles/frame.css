@@ -1,0 +1,141 @@
+/* --- в браузере на компьютере приложение живёт в рамке телефона ---------------- */
+
+@media (min-width: 720px) and (min-height: 640px) {
+  html:has(.no-tg),
+  .no-tg {
+    background: var(--desk);
+    --px: 50vw;
+    --fh: min(852px, calc(100vh - 96px));
+    --ft: calc((100vh - var(--fh)) / 2);
+  }
+
+  .device {
+    display: block;
+    position: fixed;
+    z-index: 0;
+    top: var(--ft);
+    left: calc(var(--px) - 201px);
+    width: 402px;
+    height: var(--fh);
+    border-radius: 54px;
+    background: var(--bg);
+    box-shadow: 0 0 0 11px #111114, 0 0 0 12px rgba(255, 255, 255, .14), 0 50px 100px -20px rgba(0, 0, 0, .6);
+  }
+
+  .device::before {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 122px;
+    height: 35px;
+    margin-left: -61px;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  .device .sb-time {
+    position: absolute;
+    top: 18px;
+    left: 44px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .device svg {
+    position: absolute;
+    top: 21px;
+    right: 30px;
+    width: 72px;
+    height: 13px;
+    fill: currentColor;
+  }
+
+  .no-tg .app {
+    inset: calc(var(--ft) + 50px) auto auto calc(var(--px) - 201px);
+    width: 402px;
+    height: calc(var(--fh) - 50px);
+    border-radius: 0 0 54px 54px;
+    background: transparent;
+    transform: translateZ(0);
+  }
+
+  .no-tg .screen {
+    scrollbar-width: none;
+  }
+
+  .no-tg .screen::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (min-width: 1100px) and (min-height: 640px) {
+  html:has(.no-tg),
+  .no-tg {
+    --px: calc(50vw + 186px);
+  }
+
+  .no-tg .web-intro {
+    display: grid;
+    gap: 16px;
+    position: fixed;
+    top: 50%;
+    right: calc(100vw - var(--px) + 201px + 72px);
+    width: 320px;
+    transform: translateY(-50%);
+  }
+
+  .web-intro .wi-kicker {
+    margin: 0;
+    color: var(--label-2);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .web-intro .wi-title {
+    margin: 0;
+    color: var(--label);
+    font-size: 64px;
+    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -.03em;
+  }
+
+  .web-intro .wi-text {
+    margin: 0;
+    color: var(--label-2);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .web-intro .wi-qr {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    color: var(--label-2);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .web-intro .wi-qr svg {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    padding: 8px;
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .web-intro .wi-credit {
+    margin: 8px 0 0;
+    color: var(--label-2-solid);
+    font-size: 12px;
+  }
+
+  .web-intro a {
+    color: inherit;
+  }
+}
+

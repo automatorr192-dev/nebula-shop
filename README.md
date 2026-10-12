@@ -2,17 +2,21 @@
 
 ![CI](https://github.com/automatorr192-dev/nebula-shop/actions/workflows/ci.yml/badge.svg)
 
-Витрина ИИ-подписок, игровых ключей и медиа, которая живёт внутри Telegram: каталог, карточка
-товара и корзина без единого перехода в браузер. Оплата пока имитируется: кнопка «Оплатить»
-показывает подтверждение, но денег не списывает. Настоящая оплата Telegram Stars — следующий этап.
+Витрина ИИ-подписок, игровых ключей и медиа, которая живёт внутри Telegram. Каждый товар
+выглядит стеклянной картой с цветом бренда и номиналом; каталог, экран товара, пополнение
+Steam и список покупок работают без перехода в браузер. Оплата пока имитируется: покупка
+оформляется и попадает в «Покупки», но денег не списывает. Настоящая оплата Telegram Stars —
+следующий этап.
 
 **Живое демо → https://automatorr192-dev.github.io/nebula-shop/** (открывается и в обычном браузере)
+
+<img src="docs/screen.png" width="320" alt="Главная: стопка стеклянных карт ChatGPT Plus, Telegram Premium и Steam, поиск и категории">
 
 ## Как работает
 
 ```
 /start → бот отдаёт кнопку WebApp → мини-апп открывается в Telegram
-       → каталог, корзина, MainButton «Оплатить»
+       → каталог, карта товара, MainButton «Купить · сумма» → «Покупки»
 ```
 
 Сейчас мини-апп раздаёт GitHub Pages, бот запускается отдельно. Целевая схема — один
@@ -27,16 +31,25 @@
   у Telegram нет. Поэтому адрес мини-аппа несёт метку версии (`?v=`), а статика отдаётся с
   `Cache-Control: no-cache` — браузер сверяет ETag и забирает свежее.
 - **Наружу смонтирована только `webapp/`**, не корень: рядом лежат `bot.py` и `.env`.
+- **Мини-апп собирается из `web/`** (Vite + React) прямо в `webapp/`. В git сборки нет: её делают CI перед тестами, workflow Pages и первая стадия Dockerfile.
 
 ## Стек
 
-Python 3.11 · aiogram 3 · FastAPI · Docker · GitHub Actions · Amvera
+Vite · React 19 · TypeScript · Python 3.11 · aiogram 3 · FastAPI · Docker · GitHub Actions · Amvera
 
 ## Запуск
 
 ```bash
 cp .env.example .env    # BOT_TOKEN и WEBAPP_URL
 docker compose up --build
+```
+
+Мини-апп отдельно (горячая перезагрузка):
+
+```bash
+cd web && npm ci
+npm run dev        # http://localhost:5173
+npm run build      # сборка в ../webapp
 ```
 
 Без Docker:

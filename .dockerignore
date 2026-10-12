@@ -11,3 +11,5 @@ evals/runs
 data
 *.db
 *.md
+web/node_modules
+webapp
