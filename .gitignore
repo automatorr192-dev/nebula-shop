@@ -15,3 +15,4 @@ data/
 # Сборка мини-аппа: собирают CI, Pages и Docker из web/
 webapp/
 web/node_modules/
+.wrangler/
