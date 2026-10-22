@@ -33,6 +33,8 @@ export type WebApp = {
   showConfirm?(message: string, cb: (ok: boolean) => void): void
   requestContact?(cb: (ok: boolean, res?: { responseUnsafe?: { contact?: { phone_number?: string } } }) => void): void
   openLink(url: string): void
+  openTelegramLink(url: string): void
+  close(): void
   isVersionAtLeast(v: string): boolean
   disableVerticalSwipes?(): void
 }
@@ -82,6 +84,16 @@ export function requestPhone(): Promise<string | null> {
   return new Promise(r =>
     TG!.requestContact!((ok, res) => r(ok ? res?.responseUnsafe?.contact?.phone_number ?? null : null)),
   )
+}
+
+const BOT = 'autodigitalstorrebot'
+
+/** Оплата в звёздах идёт в чате с ботом: он считает цену по каталогу и выставляет счёт.
+ * Сам мини-апп в бота не ходит — с GitHub Pages до сервера бота из РФ не достучаться. */
+export function payInBot(product: string, amount: number, login?: string) {
+  const tail = login && /^[A-Za-z0-9_]{1,32}$/.test(login) ? `-${login}` : ''
+  TG!.openTelegramLink(`https://t.me/${BOT}?start=buy-${product}-${amount}${tail}`)
+  TG!.close()
 }
 
 export function openLink(url: string) {

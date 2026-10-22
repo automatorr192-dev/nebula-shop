@@ -4,7 +4,7 @@ import { useBackButton } from './hooks/useBackButton'
 import { useHaptic } from './hooks/useHaptic'
 import { byId, type Category } from './lib/data'
 import { load, save, type Purchase } from './lib/store'
-import { TG } from './lib/tg'
+import { payInBot, TG } from './lib/tg'
 import { Catalog } from './views/Catalog'
 import { Home } from './views/Home'
 import { Product } from './views/Product'
@@ -68,6 +68,7 @@ export default function App() {
   useBackButton(pop, canBack)
 
   const buy = (product: string, amount: number, login?: string) => {
+    if (TG) return payInBot(product, amount, login)
     const o: Purchase = { id: `o${Date.now()}`, product, amount, at: new Date().toISOString(), login }
     setPurchases(list => [...list, o])
     haptic.success()

@@ -57,7 +57,7 @@ export function Product({ product: p, isTop, onBuy }: Props) {
             </li>
           ))}
         </ul>
-        <p className="fine">Демо: покупка оформляется, но деньги не списываются и код не приходит.</p>
+        <p className="fine">Демо: в Telegram оплата идёт звёздами в чате с ботом — списывается 1 ⭐ и сразу возвращается, код не приходит.</p>
       </section>
 
       <BottomAction visible={isTop} text={`Купить · ${rub(amount)}`} onClick={() => onBuy(amount)} />

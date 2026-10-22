@@ -76,7 +76,7 @@ export function Steam({ isTop, onPay }: Props) {
             <b>0 ₽</b>
           </div>
         </div>
-        <p className="fine">{valid ? 'Демо: пополнение оформляется, но деньги не списываются.' : 'Чтобы пополнить, укажите логин Steam.'}</p>
+        <p className="fine">{valid ? 'Демо: в Telegram оплата идёт звёздами в чате с ботом — списывается 1 ⭐ и сразу возвращается.' : 'Чтобы пополнить, укажите логин Steam.'}</p>
       </section>
 
       <BottomAction visible={isTop} active={valid} text={`Пополнить · ${rub(amount)}`} onClick={() => onPay(amount, login.trim())} />

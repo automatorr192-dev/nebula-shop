@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nebula-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nebula",
+      "database_id": "fae9867a-80f9-4125-b3fc-bbe5c2d58aeb",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": { "WEBAPP_URL": "https://automatorr192-dev.github.io/nebula-shop/" },
+  "secrets": { "required": ["BOT_TOKEN", "WEBHOOK_SECRET", "ADMIN_CHAT_ID"] }
+}
