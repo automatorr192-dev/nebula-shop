@@ -8,7 +8,8 @@ Steam и список покупок работают без перехода в
 оформляется и попадает в «Покупки», но денег не списывает. Настоящая оплата Telegram Stars —
 следующий этап.
 
-**Живое демо → https://automatorr192-dev.github.io/nebula-shop/** (открывается и в обычном браузере)
+**Живое демо → https://automatorr192-dev.github.io/nebula-shop/** (открывается и в обычном браузере),
+в Telegram — [@autodigitalstorrebot](https://t.me/autodigitalstorrebot)
 
 <img src="docs/screen.png" width="320" alt="Главная: стопка стеклянных карт ChatGPT Plus, Telegram Premium и Steam, поиск и категории">
 
