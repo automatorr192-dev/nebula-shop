@@ -15,6 +15,12 @@ Steam и список покупок работают без перехода в
 
 <img src="docs/screen.png" width="320" alt="Главная: стопка стеклянных карт ChatGPT Plus, Telegram Premium и Steam, поиск и категории">
 
+## Карта проекта
+
+- Исходники мини-аппа — `web/`, результат сборки — `webapp/`.
+- Telegram-бот для Workers — `worker/`. Python-сервер и лаунчер — `main.py` и `bot.py`.
+- Python-проверки — `tests/`.
+
 ## Как работает
 
 ```
